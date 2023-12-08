@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./src:/var/www
+      - ./_docker/nginx/conf.d/:/etc/nginx/conf.d/
+    ports:
+      - 8086:80
+    depends_on:
+      - app
+    container_name: gpbot_nginx
+
+  app:
+    build:
+      args:
+        user: ubuntu
+        uid: 1000
+      context: .
+      dockerfile: _docker/app/Dockerfile
+    volumes:
+      - ./src:/var/www
+    depends_on:
+      - db
+    container_name: gpbot_app
+
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    volumes:
+      - ./tmp/db:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: gpbot
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 8601:3306
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    container_name: gpbot_db
