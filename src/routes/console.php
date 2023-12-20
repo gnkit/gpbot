@@ -1,5 +1,6 @@
 <?php
 
+use DefStudio\Telegraph\Facades\Telegraph;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
@@ -17,3 +18,15 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
+
+Artisan::command('commands', function () {
+
+    Telegraph::registerBotCommands([
+        'start' => 'Бот жұмысын бастау',
+        'add' => 'Бақыланатын тауар сілтемесін енгізу',
+        'product' => 'Тауар жайлы ақпарат',
+        'price' => 'Тауардың бағасы',
+        'delete' => 'Тауарды баұылаудан алып тастау',
+        'help' => 'Нұсқаулық'
+    ])->send();
+});

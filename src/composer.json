@@ -11,6 +11,7 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
+        "spatie/laravel-data": "^3.10",
         "symfony/browser-kit": "^7.0"
     },
     "require-dev": {
