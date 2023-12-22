@@ -9,6 +9,7 @@ use App\Actions\Product\UpsertProductAction;
 use App\DataTransferObjects\AccountData;
 use App\DataTransferObjects\ProductData;
 use DefStudio\Telegraph\Handlers\WebhookHandler;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Stringable;
 
 final class Handler extends WebhookHandler
@@ -47,12 +48,21 @@ final class Handler extends WebhookHandler
 
     public function product(): void
     {
-        $this->chat->message("product")->send();
+        $product = GetProductByAccountIdAction::execute((GetAccountChatIdAction::execute($this->message->from()->id()))->id);
+
+        $this->chat->message($product->link)->send();
     }
 
     public function price(): void
     {
-        $this->chat->message("price")->send();
+        $product = GetProductByAccountIdAction::execute((GetAccountChatIdAction::execute($this->message->from()->id()))->id);
+        $prices = [];
+        foreach ($product->prices as $key => $price) {
+            $prices[] = '📆 ' . Carbon::parse($price->created_at)->isoFormat('D MMMM, YYYY');
+            $prices[] = '💵 <b>' . round($price->value) . '</b> &#8376;' . PHP_EOL;
+        }
+        $priceHtml = implode("\n", $prices);
+        $this->chat->message($priceHtml)->send();
     }
 
     public function delete(): void
