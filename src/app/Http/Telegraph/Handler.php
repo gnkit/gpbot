@@ -4,10 +4,13 @@ namespace App\Http\Telegraph;
 
 use App\Actions\Account\GetAccountChatIdAction;
 use App\Actions\Account\UpsertAccountAction;
+use App\Actions\Product\DestroyProductAction;
 use App\Actions\Product\GetProductByAccountIdAction;
 use App\Actions\Product\UpsertProductAction;
 use App\DataTransferObjects\AccountData;
 use App\DataTransferObjects\ProductData;
+use App\Models\Account;
+use App\Models\Product;
 use DefStudio\Telegraph\Handlers\WebhookHandler;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Stringable;
@@ -16,7 +19,7 @@ final class Handler extends WebhookHandler
 {
     public function start(): void
     {
-        if (null !== GetAccountChatIdAction::execute($this->message->from()->id())) {
+        if (null !== $this->getAccount($this->message->from()->id())) {
 
             $this->chat->message("Сәлем, " . $this->message->from()->username() . "! \nМеню арқылы қажетті нұсқауды таңдаңыз.")->send();
         } else {
@@ -36,7 +39,7 @@ final class Handler extends WebhookHandler
 
     public function add(): void
     {
-        if (null !== GetProductByAccountIdAction::execute((GetAccountChatIdAction::execute($this->message->from()->id()))->id)) {
+        if (null !== $this->accountHasProduct($this->message->from()->id())) {
 
             $this->reply("Қазіргі уақытта сіздің сілтемеңіз белсенді. \nСілтемеңізді тек өшіру арқылы жаңарта аласыз.");
         } else {
@@ -48,26 +51,47 @@ final class Handler extends WebhookHandler
 
     public function product(): void
     {
-        $product = GetProductByAccountIdAction::execute((GetAccountChatIdAction::execute($this->message->from()->id()))->id);
+        if (null !== $this->accountHasProduct($this->message->from()->id())) {
 
-        $this->chat->message($product->link)->send();
+            $product = GetProductByAccountIdAction::execute((GetAccountChatIdAction::execute($this->message->from()->id()))->id);
+            $this->chat->message($product->link)->send();
+        } else {
+
+            $this->chat->message('Сізге сілтеме енгізу керек.')->send();
+        }
+
     }
 
     public function price(): void
     {
-        $product = GetProductByAccountIdAction::execute((GetAccountChatIdAction::execute($this->message->from()->id()))->id);
-        $prices = [];
-        foreach ($product->prices as $key => $price) {
-            $prices[] = '📆 ' . Carbon::parse($price->created_at)->isoFormat('D MMMM, YYYY');
-            $prices[] = '💵 <b>' . round($price->value) . '</b> &#8376;' . PHP_EOL;
+        if (null !== $this->accountHasProduct($this->message->from()->id())) {
+            $product = $this->accountHasProduct($this->message->from()->id());
+            $prices = [];
+            foreach ($product->prices as $key => $price) {
+                $prices[] = '📆 ' . Carbon::parse($price->created_at)->isoFormat('D MMMM, YYYY');
+                $prices[] = '💵 <b>' . round($price->value) . '</b> &#8376;' . PHP_EOL;
+            }
+            $priceHtml = implode("\n", $prices);
+
+            $this->chat->message($priceHtml)->send();
+        } else {
+
+            $this->chat->message('Сізде көрсететін баға жоқ.')->send();
         }
-        $priceHtml = implode("\n", $prices);
-        $this->chat->message($priceHtml)->send();
     }
 
     public function delete(): void
     {
-        $this->chat->message("delete")->send();
+        $product = $this->accountHasProduct($this->message->from()->id());
+        if (null !== $product) {
+            DestroyProductAction::execute($product);
+
+            $this->chat->message('Сіздің сілтемеңіз сәтті жойылды.')->send();
+        } else {
+
+            $this->chat->message('Сізде жойылатын сілтеме жоқ.')->send();
+        }
+
     }
 
     public function help(): void
@@ -87,7 +111,7 @@ final class Handler extends WebhookHandler
 
             sleep(1);
 
-            if (null !== GetProductByAccountIdAction::execute((GetAccountChatIdAction::execute($this->message->from()->id()))->id)) {
+            if (null !== $this->accountHasProduct($this->message->from()->id())) {
 
                 $this->reply("Қазіргі уақытта сіздің сілтемеңіз белсенді. \nСілтемеңізді тек өшіру арқылы жаңарта аласыз.");
             } else {
@@ -107,6 +131,16 @@ final class Handler extends WebhookHandler
 
             $this->reply('Тек белгілі нұсқауларды беріңіз.');
         }
+    }
+
+    private function accountHasProduct($accountId): ?Product
+    {
+        return GetProductByAccountIdAction::execute(($this->getAccount($accountId))->id);
+    }
+
+    private function getAccount($accountId): ?Account
+    {
+        return GetAccountChatIdAction::execute($accountId);
     }
 
 }
