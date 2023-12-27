@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('prices', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_id');
-            $table->unsignedDecimal('value');
+            $table->unsignedDecimal('value')->nullable();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->timestamps();
         });

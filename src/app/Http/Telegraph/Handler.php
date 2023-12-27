@@ -4,6 +4,7 @@ namespace App\Http\Telegraph;
 
 use App\Actions\Account\GetAccountChatIdAction;
 use App\Actions\Account\UpsertAccountAction;
+use App\Actions\Price\GetPriceByProductIdAction;
 use App\Actions\Product\DestroyProductAction;
 use App\Actions\Product\GetProductByAccountIdAction;
 use App\Actions\Product\UpsertProductAction;
@@ -121,11 +122,23 @@ final class Handler extends WebhookHandler
                     'link' => $this->message->text(),
                 ]);
 
-                UpsertProductAction::execute($data);
+                $product = UpsertProductAction::execute($data);
 
                 sleep(1);
 
                 $this->reply('Сіздің сілтемеңіз қабылданды. Жауапты күтіңіз...');
+
+                sleep(5);
+
+                $price = GetPriceByProductIdAction::execute($product->id);
+
+                sleep(2);
+
+                $html = '📆 ' . Carbon::parse($price->created_at)->isoFormat('D MMMM, YYYY') . PHP_EOL
+                    . '💵 <b>' . round($price->value) . '</b> &#8376;' . PHP_EOL;
+
+                $this->reply('Сіздің тауарыңыз сәтті тіркелді. Бастапқы бағасы төмендегідей:' . PHP_EOL . $html);
+
             }
         } else {
 
@@ -135,7 +148,7 @@ final class Handler extends WebhookHandler
 
     private function accountHasProduct($accountId): ?Product
     {
-        return GetProductByAccountIdAction::execute(($this->getAccount($accountId))->id);
+        return GetProductByAccountIdAction::execute(($this->getAccount($accountId))?->id);
     }
 
     private function getAccount($accountId): ?Account
