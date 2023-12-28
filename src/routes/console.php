@@ -32,8 +32,8 @@ Artisan::command('commands', function () {
 });
 
 Artisan::command('test', function () {
-    $scraper = new \App\Services\Scrapers\KaspiScraper();
-    $r = $scraper->crawlerRequest('https://kaspi.kz/shop/p/huawei-band-4-rozovyi-100041309/?c=196220100');
+    $scraper = new \App\Services\Scrapers\AlserScraper();
+    $r = $scraper->crawlerRequest('https://alser.kz/p/morozilnyj-lar-hansa-fs19953w');
     dd($scraper->getPrice());
 });
 
