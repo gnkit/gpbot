@@ -36,3 +36,7 @@ Artisan::command('test', function () {
     $r = $scraper->crawlerRequest('https://kaspi.kz/shop/p/huawei-band-4-rozovyi-100041309/?c=196220100');
     dd($scraper->getPrice());
 });
+
+Artisan::command('cron', function () {
+    \App\Actions\Scraper\UpsertPriceAllProductScraperAction::execute();
+});

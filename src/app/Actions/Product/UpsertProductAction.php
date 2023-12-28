@@ -3,7 +3,7 @@
 namespace App\Actions\Product;
 
 use App\Actions\Price\UpsertPriceAction;
-use App\Actions\Scraper\GetPriceAction;
+use App\Actions\Scraper\GetPriceScraperAction;
 use App\DataTransferObjects\PriceData;
 use App\DataTransferObjects\ProductData;
 use App\Models\Product;
@@ -22,7 +22,7 @@ final class UpsertProductAction
             ],
         );
 
-        $price = GetPriceAction::execute($data->link);
+        $price = GetPriceScraperAction::execute($data->link);
 
         $priceData = PriceData::from([
             'product_id' => $product->id,
