@@ -13,6 +13,7 @@ class BaseScraper
 {
     public Client $client;
     public Crawler $crawler;
+    public string $priceElement = '';
 
     public function __construct()
     {
@@ -38,9 +39,9 @@ class BaseScraper
         }
     }
 
-    public function getPrice(string $element): string
+    public function getPrice(): string
     {
-        $priceText = $this->crawler->filter($element)->text();
+        $priceText = $this->crawler->filter($this->priceElement)->text();
 
         return $this->getOnlyDigits(trim($priceText));
     }

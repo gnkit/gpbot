@@ -12,7 +12,6 @@ final class KaspiScraper extends BaseScraper
     private string $apiPath = 'https://kaspi.kz/yml/offer-view/offers/';
     private string $productId = '';
     private string $cityId = '';
-    public string $priceElement = '';
 
     /**
      * @param $url
@@ -46,7 +45,6 @@ final class KaspiScraper extends BaseScraper
             ]);
 
             $html = $response->getBody()->getContents();
-            $this->priceElement = json_decode($html)->offers[0]->price;
 
             return $this->crawler = new Crawler($html);
 
@@ -56,9 +54,11 @@ final class KaspiScraper extends BaseScraper
         }
     }
 
-    public function price(): string
+    public function getPrice(): string
     {
-        return $this->getOnlyDigits(trim($this->priceElement));
+        $priceText = json_decode($this->crawler->text())->offers[0]->price;
+
+        return $this->getOnlyDigits(trim($priceText));
     }
 
     public function parseUrlForApi($url): string

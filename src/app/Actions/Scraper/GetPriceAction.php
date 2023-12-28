@@ -9,18 +9,21 @@ final class GetPriceAction
 {
     /**
      * @param $url
-     * @return string
+     * @return string|null
      * @throws GuzzleException
      */
-    public static function execute($url): string
+    public static function execute($url): string|null
     {
         $baseScraper = new BaseScraper();
         $scraper = $baseScraper->chooseScraper($url);
 
-        if (null !== $scraper->chooseScraper($url)) {
+        if (null !== $scraper) {
             $scraper->crawlerRequest($url);
 
-            return $scraper->price();
+            return $scraper->getPrice();
+        } else {
+
+            return null;
         }
     }
 }
