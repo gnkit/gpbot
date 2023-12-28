@@ -32,8 +32,8 @@ Artisan::command('commands', function () {
 });
 
 Artisan::command('test', function () {
-    $scraper = new \App\Services\Scrapers\AlserScraper();
-    $r = $scraper->crawlerRequest('https://alser.kz/p/morozilnyj-lar-hansa-fs19953w');
+    $scraper = new \App\Services\Scrapers\EvrikaScraper();
+    $r = $scraper->crawlerRequest('https://evrika.com/catalog/mashinka-dlya-strizhki-i-trimmer-braun-mgk5345-blk/p36882');
     dd($scraper->getPrice());
 });
 
