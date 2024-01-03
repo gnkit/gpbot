@@ -32,8 +32,8 @@ Artisan::command('commands', function () {
 });
 
 Artisan::command('test', function () {
-    $scraper = new \App\Services\Scrapers\MechtaScraper();
-    $r = $scraper->crawlerRequest('https://www.mechta.kz/product/telefon-sotovyy-vivo-v27e-8128gb-lively-green-v2237/');
+    $scraper = new \App\Services\Scrapers\HalykScraper();
+    $r = $scraper->crawlerRequest('https://halykmarket.kz/zhezkazgan/category/vityazhki/vytjazhka-hansa-otp6233bh-chernaja');
     dd($scraper->getPrice());
 });
 
