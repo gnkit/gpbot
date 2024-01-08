@@ -97,12 +97,21 @@ final class Handler extends WebhookHandler
 
     public function help(): void
     {
-        $this->chat->message("help")->send();
+        $html = '<b>Нұсқаулық</b>' . PHP_EOL
+            . '1. Қажетті тауардың сілтемесін көшіріп аласыз,' . PHP_EOL
+            . '2. Көшірілген сілтемені ботқа жібересіз,' . PHP_EOL
+            . '3. Бот сілтемеңізді қабылдап өңдейді,' . PHP_EOL
+            . '4. Сілтемеңіз сәтті қабылданса, тауардың бастапқы бағасы мен тіркелген күні хабарлама ретінде келеді.' . PHP_EOL
+            . '5. Тауар бағасында өзгеріс болғанда, сізге хабарлама жіберіледі.' . PHP_EOL
+            . '<b>🚫 Егер, сілтеме қате болса (қабылданбау, өңделмеу), сілтемені қайта көшіріп жіберуіңізге болады.</b>' . PHP_EOL
+            . '<b>📑Бот өңдеу алатын сілтемелер келесідей:</b>' . PHP_EOL
+            . 'alser, evrika, flip, halyk, kaspi, mechta, shop, sulpak, techndom' . PHP_EOL;
+        $this->chat->message($html)->send();
     }
 
     protected function handleUnknownCommand(Stringable $text): void
     {
-        $this->reply('Белгісіз нұсқау.');
+        $this->reply('Белгісіз нұсқау . ');
     }
 
     public function handleChatMessage(Stringable $text): void
@@ -126,7 +135,7 @@ final class Handler extends WebhookHandler
 
                 sleep(1);
 
-                $this->reply('Сіздің сілтемеңіз қабылданды. Жауапты күтіңіз...');
+                $this->reply('Сіздің сілтемеңіз қабылданды . Жауапты күтіңіз...');
 
                 sleep(5);
 
@@ -135,7 +144,7 @@ final class Handler extends WebhookHandler
                 sleep(2);
 
                 $html = '📆 ' . Carbon::parse($price->created_at)->isoFormat('D MMMM, YYYY') . PHP_EOL
-                    . '💵 <b>' . round($price->value) . '</b> &#8376;' . PHP_EOL;
+                    . '💵 < b>' . round($price->value) . ' </b > &#8376;' . PHP_EOL;
 
                 $this->reply('Сіздің тауарыңыз сәтті тіркелді. Бастапқы бағасы төмендегідей:' . PHP_EOL . $html);
 
@@ -146,17 +155,14 @@ final class Handler extends WebhookHandler
         }
     }
 
-    public function sendPrice($newPrice)
-    {
-        $this->chat->message($newPrice)->send();
-    }
-
-    private function accountHasProduct($accountId): ?Product
+    private
+    function accountHasProduct($accountId): ?Product
     {
         return GetProductByAccountIdAction::execute(($this->getAccount($accountId))?->id);
     }
 
-    private function getAccount($accountId): ?Account
+    private
+    function getAccount($accountId): ?Account
     {
         return GetAccountByChatIdAction::execute($accountId);
     }
