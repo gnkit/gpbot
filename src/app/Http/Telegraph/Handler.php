@@ -2,7 +2,7 @@
 
 namespace App\Http\Telegraph;
 
-use App\Actions\Account\GetAccountChatIdAction;
+use App\Actions\Account\GetAccountByChatIdAction;
 use App\Actions\Account\UpsertAccountAction;
 use App\Actions\Price\GetPriceByProductIdAction;
 use App\Actions\Product\DestroyProductAction;
@@ -54,7 +54,7 @@ final class Handler extends WebhookHandler
     {
         if (null !== $this->accountHasProduct($this->message->from()->id())) {
 
-            $product = GetProductByAccountIdAction::execute((GetAccountChatIdAction::execute($this->message->from()->id()))->id);
+            $product = GetProductByAccountIdAction::execute((GetAccountByChatIdAction::execute($this->message->from()->id()))->id);
             $this->chat->message($product->link)->send();
         } else {
 
@@ -118,7 +118,7 @@ final class Handler extends WebhookHandler
             } else {
 
                 $data = ProductData::from([
-                    'account_id' => (GetAccountChatIdAction::execute($this->message->from()->id()))->id,
+                    'account_id' => (GetAccountByChatIdAction::execute($this->message->from()->id()))->id,
                     'link' => $this->message->text(),
                 ]);
 
@@ -146,6 +146,11 @@ final class Handler extends WebhookHandler
         }
     }
 
+    public function sendPrice($newPrice)
+    {
+        $this->chat->message($newPrice)->send();
+    }
+
     private function accountHasProduct($accountId): ?Product
     {
         return GetProductByAccountIdAction::execute(($this->getAccount($accountId))?->id);
@@ -153,7 +158,7 @@ final class Handler extends WebhookHandler
 
     private function getAccount($accountId): ?Account
     {
-        return GetAccountChatIdAction::execute($accountId);
+        return GetAccountByChatIdAction::execute($accountId);
     }
 
 }

@@ -6,8 +6,8 @@ use App\Models\Product;
 
 final class GetProductByAccountIdAction
 {
-    public static function execute($account_id): ?Product
+    public static function execute($accountId): ?Product
     {
-        return Product::where('account_id', '=', $account_id)->first();
+        return Product::where('account_id', '=', $accountId)->first();
     }
 }
