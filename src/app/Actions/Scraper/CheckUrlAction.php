@@ -29,7 +29,7 @@ final class CheckUrlAction
         } else {
 
             $client = new Client();
-            $response = $client->get($url, ['timeout' => 1]);
+            $response = $client->get($url, ['timeout' => '0']);
 
             return $response->getStatusCode();
         }

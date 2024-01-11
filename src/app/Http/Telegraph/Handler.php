@@ -108,7 +108,7 @@ final class Handler extends WebhookHandler
             . '5. Тауар бағасында өзгеріс болғанда, сізге хабарлама жіберіледі.' . PHP_EOL
             . '<b>🚫 Егер, сілтеме қате болса (қабылданбау, өңделмеу), сілтемені қайта көшіріп жіберуіңізге болады.</b>' . PHP_EOL
             . '<b>📑Бот өңдеу алатын сілтемелер келесідей:</b>' . PHP_EOL
-            . 'alser, evrika, flip, halyk, kaspi, mechta, shop, sulpak, techndom' . PHP_EOL;
+            . 'alser, evrika, flip, halykmarket, kaspi, mechta, shop, sulpak, techndom' . PHP_EOL;
         $this->chat->message($html)->send();
     }
 

@@ -2,7 +2,7 @@
 
 namespace App\Services\Scrapers;
 
-final class HalykScraper extends BaseScraper
+final class HalykMarketScraper extends BaseScraper
 {
     public string $priceElement = '.desc-price-value';
 }
