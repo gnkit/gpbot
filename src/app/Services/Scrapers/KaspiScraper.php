@@ -32,7 +32,7 @@ final class KaspiScraper extends BaseScraper
                     'X-KS-City' => $this->cityId,
                     'Origin' => 'https://kaspi.kz',
                     'Connection' => 'keep-alive',
-                    'Referer' => 'https://kaspi.kz/shop/p/xiaomi-redmi-smart-band-2-chernyi-109272703/?c=316220100',
+                    'Referer' => $url,
                     'Cookie' => "ssaid=604a8450-cb4d-11ed-ad2c-afbf438935cb; ks.tg=13; k_stat=df6092b5-4a1d-4246-8db9-8332669318c7; kaspi.storefront.cookie.city={$this->cityId}; test.user.group=91; test.user.group_exp=47; test.user.group_exp2=20; __tld__=null; .AspNetCore.Culture=c%3Dru%7Cuic%3Dru; NSC_ESNS=2d271f65-dec7-158b-9678-e61af6284ef8_1909451476_4157449272_00000000022232303645",
                     'Sec-Fetch-Dest' => 'empty',
                     'Sec-Fetch-Mode' => 'cors',
