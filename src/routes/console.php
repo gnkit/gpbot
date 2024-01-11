@@ -32,7 +32,7 @@ Artisan::command('commands', function () {
 });
 
 Artisan::command('test', function () {
-    $scraper = new \App\Services\Scrapers\HalykMarketScraper();
+    $scraper = new \App\Services\Scrapers\HalykmarketScraper();
     $r = $scraper->crawlerRequest('https://halykmarket.kz/zhezkazgan/category/vityazhki/vytjazhka-hansa-otp6233bh-chernaja');
     dd($scraper->getPrice());
 });
