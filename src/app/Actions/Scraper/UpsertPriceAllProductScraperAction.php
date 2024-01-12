@@ -27,7 +27,7 @@ final class UpsertPriceAllProductScraperAction
                 $newPriceValue = GetPriceScraperAction::execute($product->link);
                 $currentPrice = GetLastPriceByProductIdAction::execute($product->id);
 
-                if ($newPriceValue != $currentPrice?->value) {
+                if ($newPriceValue != $currentPrice->value) {
                     UpsertPriceAction::execute(PriceData::from([
                         'product_id' => $product->id,
                         'value' => $newPriceValue,
@@ -35,7 +35,7 @@ final class UpsertPriceAllProductScraperAction
 
                     $account = GetAccountByProductIdAction::execute($product->account_id);
                     $chat = GetChatByChatIdAction::execute($account->chat_id);
-                    $difference = GetDifferencePercentOfPriceAction::execute($currentPrice?->value, $newPriceValue);
+                    $difference = GetDifferencePercentOfPriceAction::execute($currentPrice->value, $newPriceValue);
                     $differenceHtml = ($currentPrice->value > $newPriceValue)
                         ? '📉 ' . $difference . '% төмендеді.'
                         : '📈 ' . $difference . '% көтерілді.';
