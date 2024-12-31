@@ -10,15 +10,15 @@ use Symfony\Component\DomCrawler\Crawler;
 final class KaspiScraper extends BaseScraper
 {
     private string $apiPath = 'https://kaspi.kz/yml/offer-view/offers/';
+
     private string $productId = '';
+
     private string $cityId = '';
 
     /**
-     * @param $url
-     * @return Crawler|void
      * @throws GuzzleException
      */
-    public function crawlerRequest($url)
+    public function crawlerRequest($url): ?Crawler
     {
         try {
             $newUrl = $this->parseUrlForApi($url);
@@ -27,21 +27,21 @@ final class KaspiScraper extends BaseScraper
                     'User-Agent' => 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/119.0',
                     'Accept' => 'application/json, text/*',
                     'Accept-Language' => 'en-US,en;q=0.5',
-                    'Accept-Encoding' => 'gzip, deflate, br',
+                    'Accept-Encoding' => 'gzip, deflate, br, zstd',
                     'Content-Type' => 'application/json; charset=utf-8',
                     'X-KS-City' => $this->cityId,
                     'Origin' => 'https://kaspi.kz',
                     'Connection' => 'keep-alive',
                     'Referer' => $url,
-                    'Cookie' => "ssaid=604a8450-cb4d-11ed-ad2c-afbf438935cb; ks.tg=13; k_stat=df6092b5-4a1d-4246-8db9-8332669318c7; kaspi.storefront.cookie.city={$this->cityId}; test.user.group=91; test.user.group_exp=47; test.user.group_exp2=20; __tld__=null; .AspNetCore.Culture=c%3Dru%7Cuic%3Dru; NSC_ESNS=2d271f65-dec7-158b-9678-e61af6284ef8_1909451476_4157449272_00000000022232303645",
+                    'Cookie' => 'ks.tg=45; k_stat=7ef2a9b5-35db-4d10-86b2-36af067fe103; ks.cart=c4cf22c3-22af-48ee-8e33-20aa704b752d; locale=ru-RU; current-action-name=Index; kaspi.storefront.cookie.city="$this->cityId"',
                     'Sec-Fetch-Dest' => 'empty',
                     'Sec-Fetch-Mode' => 'cors',
-                    'Sec-Fetch-Site' => 'same-origin'
+                    'Sec-Fetch-Site' => 'same-origin',
                 ],
                 'json' => [
                     'cityId' => $this->cityId,
                     'id' => $this->productId,
-                ]
+                ],
             ]);
 
             $html = $response->getBody()->getContents();
@@ -71,7 +71,6 @@ final class KaspiScraper extends BaseScraper
         $this->cityId = end($pathQuery);
         $this->productId = end($pathUrl);
 
-        return $this->apiPath . $this->productId;
+        return $this->apiPath.$this->productId;
     }
-
 }

@@ -12,7 +12,9 @@ use Symfony\Component\DomCrawler\Crawler;
 class BaseScraper
 {
     public Client $client;
+
     public Crawler $crawler;
+
     public string $priceElement = '';
 
     public function __construct()
@@ -21,11 +23,9 @@ class BaseScraper
     }
 
     /**
-     * @param $url
-     * @return Crawler|void
      * @throws GuzzleException
      */
-    public function crawlerRequest($url)
+    public function crawlerRequest($url): ?Crawler
     {
         try {
             $response = $this->client->request('GET', $url);
@@ -46,16 +46,17 @@ class BaseScraper
         return $this->getOnlyDigits(trim($priceText));
     }
 
-    public function chooseScraper(string $url): BaseScraper|null
+    public function chooseScraper(string $url): ?BaseScraper
     {
         $store = $this->getStore($url);
         $support = $this->checkSupportStore($store);
 
-        if (null !== $support) {
-            $scraper = 'App\Services\Scrapers\\' . ucfirst($store) . 'Scraper';
+        if ($support !== null) {
+            $scraper = 'App\Services\Scrapers\\'.ucfirst($store).'Scraper';
 
             return new $scraper();
         }
+
         return null;
     }
 
@@ -78,13 +79,14 @@ class BaseScraper
         return preg_replace('/[^0-9]/', '', $str);
     }
 
-    private function checkSupportStore($store): string|null
+    private function checkSupportStore($store): ?string
     {
         foreach (Store::cases() as $case) {
             if ($store == $case->value) {
                 return $case->value;
             }
         }
+
         return null;
     }
 }

@@ -12,11 +12,16 @@ final class EvrikaScraper extends BaseScraper
 
     private string $productId = '';
 
+    private string $productMainPath = '';
+
     public function crawlerRequest($url): ?Crawler
     {
         try {
+            $this->getProductMainPath($url);
             $this->getProductIdForApi($url);
-            $response = $this->client->request('GET', $this->apiPath.$this->productId, [
+            $requestUrl = $this->apiPath.$this->productId.'/'.$this->productMainPath;
+
+            $response = $this->client->request('GET', $requestUrl, [
                 'headers' => [
                     'User-Agent' => 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:126.0) Gecko/20100101 Firefox/126.0',
                     'Accept' => 'application/json, text/plain, */*',
@@ -59,14 +64,21 @@ final class EvrikaScraper extends BaseScraper
     {
         $urlParsed = parse_url($url);
 
-        return basename($urlParsed['path']);
+        return $urlParsed['path'];
     }
 
     private function getProductIdForApi($url): void
     {
-        $rawProductId = $this->parseUrlForApi($url);
+        $rawProductId = basename($this->parseUrlForApi($url));
         $productId = $this->getOnlyDigits($rawProductId);
 
         $this->productId = $productId;
+    }
+
+    private function getProductMainPath(string $url): void
+    {
+        $rawProductMainPath = explode('/', $this->parseUrlForApi($url));
+
+        $this->productMainPath = $rawProductMainPath[2];
     }
 }

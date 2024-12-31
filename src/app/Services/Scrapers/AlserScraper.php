@@ -4,5 +4,5 @@ namespace App\Services\Scrapers;
 
 final class AlserScraper extends BaseScraper
 {
-    public string $priceElement = '.desktop-actions__price';
+    public string $priceElement = '.price-container div span.price';
 }
